@@ -45,22 +45,22 @@ class Representative < ApplicationRecord
       # Inspect all the data that's there to make part 1 easier.
       # Rails.logger.debug official
       # official.dig('bio', 'party')
-      ocdid = official['govtrack_id']
+      ocdid = official.dig('references', 'govtrack_id')
       reps << Representative.find_rep(official, ocdid: ocdid, title: title)
     end
     reps
   end
 
   def self.find_rep(official, title: '', ocdid: '')
-    rep = Representative.create({ name: official['name'], ocdid: ocdid,
-      title: title, party: official['party'], photo_url: official['photo_url'] })
-    rep.save
+    rep = Representative.find_or_initialize_by(ocdid: ocdid)
+    rep.update!(name: official['name'], title: title,
+                party: official['party'], photo_url: official['photo_url'])
     rep
   end
 
   def update_from_geocodio(official)
     self.title = official['type']
-    self.ocdid = official['govtrack_id']
+    self.ocdid = official.dig('references', 'govtrack_id')
     self.party = official['party']
     self.photo_url = official['photo_url']
     # TODO: store the address, phone and website
