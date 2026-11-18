@@ -21,6 +21,9 @@ module NavigationHelpers
     when /^the state page for "(\w\w)"$/
       "/state/#{$1}"
 
+    when /^the county page for "(\d{3})" in "(\w\w)"$/
+      "/state/#{$2}/county/#{$1}"
+
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #

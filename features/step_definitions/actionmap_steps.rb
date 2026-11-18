@@ -35,7 +35,12 @@ Then /I click the county "(.*)"/i do |county_name|
 end
 
 Then /I click the county with FIPS Code "(.*)"/i do |fips_code|
-  # Same as above, you might find this helpful.
+  # Fire a real click event so the map's JS click handler runs.
+  selector = "path[data-county-fips-code='#{fips_code}']"
+  expect(page).to have_css(selector)
+  page.execute_script(
+    "document.querySelector(\"#{selector}\").dispatchEvent(new MouseEvent('click', { bubbles: true }))"
+  )
 end
 
 Then /I should see (\d+) (?:states|counties)/i do |count|
