@@ -127,5 +127,15 @@ std_fips_code: '001' }
 std_fips_code: '001' }
       expect(response).to redirect_to root_path
     end
+
+    it 'redirects to home page if invalid county' do
+      get :county, params: county_params.merge(std_fips_code: '999')
+      expect(response).to redirect_to root_path
+    end
+
+    it 'flashes an alert if invalid county' do
+      get :county, params: county_params.merge(std_fips_code: '999')
+      expect(flash[:alert]).to eq("County with code '999' not found for CA")
+    end
   end
 end
