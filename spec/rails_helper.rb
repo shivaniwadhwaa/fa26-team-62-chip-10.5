@@ -5,6 +5,7 @@
 require 'simplecov'
 SimpleCov.start 'rails' do
   command_name 'rspec'
+  add_filter 'lib'
 end
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
