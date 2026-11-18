@@ -21,6 +21,9 @@ module NavigationHelpers
     when /^the state page for "(\w\w)"$/
       "/state/#{$1}"
 
+    when /^the county page for "(\d{3})" in "(\w\w)"$/
+      "/state/#{$2}/county/#{$1}"
+
     when /^the profile page for "([^"]*)"$/
       representative_path(Representative.find_by!(name: $1))
 

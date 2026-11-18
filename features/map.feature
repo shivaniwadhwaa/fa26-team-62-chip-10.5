@@ -6,3 +6,10 @@ Scenario: Navigating States and counties
   When I click the state "CA"
   Then I should see "California"
   And I should be on the state page for "CA"
+
+Scenario: The county page lists the county's representatives below the map
+  Given Geocodio returns "Alex Padilla" as a senator for any address
+  When I go to the county page for "001" in "CA"
+  Then I should see "Alameda County, CA"
+  And I should see "Representatives for Alameda County"
+  And I should see "Alex Padilla"
