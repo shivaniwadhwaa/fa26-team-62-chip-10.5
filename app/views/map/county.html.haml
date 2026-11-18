@@ -1,6 +1,9 @@
 .row
   .col-12
     %section.my-4
+      = link_to state_map_path(@state.symbol), class: 'btn btn-link ps-0' do
+        %i.fas.fa-arrow-left{ 'aria-hidden': true }
+        Back to #{@state.name}
       %h2.text-center
         #{@county.name}, #{@state.symbol}
       .overflow-hidden.bg-light.text-center.mb-3
