@@ -25,3 +25,10 @@ Feature: View a representative's profile
     When I go to the profile page for "Jane Doe"
     Then I should see "Jane Doe"
     And I should see "News Articles"
+
+  Scenario: Reps on the county page link to their profiles
+    Given Geocodio returns "Alex Padilla" as a senator for any address
+    And I am on the county page for "001" in "CA"
+    When I follow "Alex Padilla"
+    Then I should see "Democrat"
+    And I should be on the profile page for "Alex Padilla"

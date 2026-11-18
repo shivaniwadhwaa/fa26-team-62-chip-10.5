@@ -87,6 +87,22 @@ describe MapController do
       expect(assigns(:representatives).map(&:name)).to eq(['Alex Padilla'])
     end
 
+    context 'when rendering the county page' do
+      render_views
+
+      it 'links each rep name to their profile page' do
+        get :county, params: county_params
+        rep = Representative.find_by(ocdid: '456789')
+        expect(response.body).to include(%(href="#{representative_path(rep)}"))
+      end
+
+      it 'says so when no reps are found' do
+        allow(Representative).to receive(:geocodio_search).and_raise(ArgumentError, 'Missing GEOCODIO_API_KEY')
+        get :county, params: county_params
+        expect(response.body).to include('No representatives found for Alameda.')
+      end
+    end
+
     it 'assigns no representatives if the geocodio search fails' do
       allow(Representative).to receive(:geocodio_search).and_raise(ArgumentError, 'Missing GEOCODIO_API_KEY')
       get :county, params: county_params
