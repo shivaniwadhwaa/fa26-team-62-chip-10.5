@@ -61,6 +61,38 @@ describe MapController do
   end
 
   describe 'GET county' do
+    let(:county_params) do
+      { use_route: '/state/:state_symbol/county/:std_fips_code', state_symbol: 'CA', std_fips_code: '001' }
+    end
+    let(:geocodio_data) do
+      legislator = { 'type' => 'senator',
+                     'bio' => { 'first_name' => 'Alex', 'last_name' => 'Padilla' },
+                     'references' => { 'govtrack_id' => '456789' } }
+      { 'results' => [{ 'response' => { 'results' => [{ 'fields' => {
+        'congressional_districts' => [{ 'current_legislators' => [legislator] }]
+      } }] } }] }
+    end
+
+    before do
+      allow(Representative).to receive(:geocodio_search).and_return(geocodio_data)
+    end
+
+    it 'searches geocodio for the county' do
+      get :county, params: county_params
+      expect(Representative).to have_received(:geocodio_search).with('Alameda, CA')
+    end
+
+    it 'assigns @representatives for the county' do
+      get :county, params: county_params
+      expect(assigns(:representatives).map(&:name)).to eq(['Alex Padilla'])
+    end
+
+    it 'assigns no representatives if the geocodio search fails' do
+      allow(Representative).to receive(:geocodio_search).and_raise(ArgumentError, 'Missing GEOCODIO_API_KEY')
+      get :county, params: county_params
+      expect(assigns(:representatives)).to eq([])
+    end
+
     it 'returns a successful response' do
       get :county,
           params: { use_route: '/state/:state_symbol/county/:std_fips_code', state_symbol: 'CA',
