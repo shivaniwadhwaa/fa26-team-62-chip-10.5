@@ -43,7 +43,8 @@ Then /I click the county with FIPS Code "(.*)"/i do |fips_code|
   )
 end
 
-Then /I should see (\d+) (?:states|counties)/i do |count|
+Then /I should see (\d+) (?:states|counties)/i do |_count|
   # How many counties should the map render
   # You might use this as a check that the right number of elements are rendered.
+  pending
 end

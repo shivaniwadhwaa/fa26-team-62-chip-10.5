@@ -87,6 +87,16 @@ describe MapController do
       expect(assigns(:representatives).map(&:name)).to eq(['Alex Padilla'])
     end
 
+    it 'redirects to home page if invalid county' do
+      get :county, params: county_params.merge(std_fips_code: '999')
+      expect(response).to redirect_to root_path
+    end
+
+    it 'flashes an alert if invalid county' do
+      get :county, params: county_params.merge(std_fips_code: '999')
+      expect(flash[:alert]).to eq("County with code '999' not found for CA")
+    end
+
     it 'assigns no representatives if the geocodio search fails' do
       allow(Representative).to receive(:geocodio_search).and_raise(ArgumentError, 'Missing GEOCODIO_API_KEY')
       get :county, params: county_params
