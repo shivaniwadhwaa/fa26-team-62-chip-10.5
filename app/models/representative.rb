@@ -42,9 +42,6 @@ class Representative < ApplicationRecord
     @legislators.each_with_index do |official, _index|
       official['name'] = "#{official.dig('bio', 'first_name')} #{official.dig('bio', 'last_name')}"
       title = official['type']
-      # Inspect all the data that's there to make part 1 easier.
-      # Rails.logger.debug official
-      # official.dig('bio', 'party')
       ocdid = official.dig('references', 'govtrack_id')
       reps << Representative.find_rep(official, ocdid: ocdid, title: title)
     end
@@ -53,17 +50,24 @@ class Representative < ApplicationRecord
 
   def self.find_rep(official, title: '', ocdid: '')
     rep = Representative.find_or_initialize_by(ocdid: ocdid)
-    rep.update!(name: official['name'], title: title,
-                party: official['party'], photo_url: official['photo_url'])
+    rep.update!(name: official['name'], title: title, **profile_attributes(official))
     rep
+  end
+
+  def self.profile_attributes(official)
+    {
+      party: official.dig('bio', 'party'),
+      photo_url: official.dig('bio', 'photo_url'),
+      address: official.dig('contact', 'address'),
+      phone_number: official.dig('contact', 'phone'),
+      website_url: official.dig('contact', 'url')
+    }
   end
 
   def update_from_geocodio(official)
     self.title = official['type']
     self.ocdid = official.dig('references', 'govtrack_id')
-    self.party = official['party']
-    self.photo_url = official['photo_url']
-    # TODO: store the address, phone and website
+    assign_attributes(self.class.profile_attributes(official))
     save!
     self
   end
