@@ -21,30 +21,37 @@ end
 # <path class="actionmap-view-region" d="" tabindex="0" data-state-name="California"
 #    data-state-fips-code="06" data-state-symbol="CA"></path>
 
-Then /I click the state "(\w\w)"/i do |state|
-  # Find the element, assert it exists.
-  # then 'fake click' it by directly visiting the URL
-  # IDEALLY we could call .click on the element directly, but
-  # this currently errors in Chrome with SVG elements / doesn't navigate.
-  expect(page).to have_css("path[data-state-symbol='#{state}']")
-  visit state_map_path(state)
-end
-
-Then /I click the county "(.*)"/i do |county_name|
-  # Same as above, you might find this helpful.
-end
-
-Then /I click the county with FIPS Code "(.*)"/i do |fips_code|
-  # Fire a real click event so the map's JS click handler runs.
-  selector = "path[data-county-fips-code='#{fips_code}']"
+# Clicking SVG paths with Capybara's .click errors in Chrome, so we fire a
+# real click event instead. That still runs the map's JS click handler.
+def click_map_region(selector)
   expect(page).to have_css(selector)
   page.execute_script(
     "document.querySelector(\"#{selector}\").dispatchEvent(new MouseEvent('click', { bubbles: true }))"
   )
 end
 
-Then /I should see (\d+) (?:states|counties)/i do |_count|
-  # How many counties should the map render
-  # You might use this as a check that the right number of elements are rendered.
-  pending
+# The county maps are drawn from county subdivisions, so one county can have
+# several paths. Count the distinct values of a data attribute instead.
+def distinct_map_regions(attribute)
+  expect(page).to have_css("path[#{attribute}]")
+  page.evaluate_script(
+    "new Set(Array.from(document.querySelectorAll('path[#{attribute}]'), (p) => p.getAttribute('#{attribute}'))).size"
+  )
+end
+
+Then /I click the state "(\w\w)"/i do |state|
+  click_map_region("path[data-state-symbol='#{state}']")
+end
+
+Then /I click the county "(.*)"/i do |county_name|
+  click_map_region("path[data-county-name='#{county_name}']")
+end
+
+Then /I click the county with FIPS Code "(.*)"/i do |fips_code|
+  click_map_region("path[data-county-fips-code='#{fips_code}']")
+end
+
+Then /I should see (\d+) (states|counties)/i do |count, kind|
+  attribute = kind == 'states' ? 'data-state-symbol' : 'data-county-fips-code'
+  expect(distinct_map_regions(attribute)).to eq(count.to_i)
 end
