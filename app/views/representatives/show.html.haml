@@ -1,4 +1,30 @@
-.container-fluid.bg-light
-  .row.text-center
-    .col-12
-      %h1.text-center= @representative&.name
+.container.py-4
+  .row.justify-content-center
+    .col-12.col-md-8
+      .card.shadow-sm
+        .row.g-0
+          - if @representative.photo_url.present?
+            .col-md-4.text-center.p-3
+              = image_tag @representative.photo_url, alt: "Photo of #{@representative.name}",
+                class: 'img-fluid rounded'
+          .col
+            .card-body
+              %h1.card-title= @representative.name
+              %p.text-muted.text-capitalize
+                = @representative.title
+                - if @representative.party.present?
+                  &middot;
+                  = @representative.party
+              %dl.row.mb-0
+                - if @representative.address.present?
+                  %dt.col-sm-3 Address
+                  %dd.col-sm-9= @representative.address
+                - if @representative.phone_number.present?
+                  %dt.col-sm-3 Phone
+                  %dd.col-sm-9= link_to @representative.phone_number, "tel:#{@representative.phone_number}"
+                - if @representative.website_url.present?
+                  %dt.col-sm-3 Website
+                  - url = @representative.website_url
+                  %dd.col-sm-9= link_to url, url, target: '_blank', rel: 'noopener'
+      .mt-3
+        = link_to 'News Articles', representative_news_items_path(@representative), class: 'btn btn-primary'
