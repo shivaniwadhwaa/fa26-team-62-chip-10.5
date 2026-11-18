@@ -21,6 +21,9 @@ module NavigationHelpers
     when /^the state page for "(\w\w)"$/
       "/state/#{$1}"
 
+    when /^the profile page for "([^"]*)"$/
+      representative_path(Representative.find_by!(name: $1))
+
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #
