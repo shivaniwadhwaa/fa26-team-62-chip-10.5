@@ -30,13 +30,19 @@ Scenario: The Representatives Page
 ## You may want to set up conditions like searching for data, etc.
 
 ## CS169: Add the first page here.
-# Be sure to tag the Scenario with @a11y
-# @a11y
-# Scenario: ...
+@a11y
+Scenario: The State Map Page
+    Given I am on the state page for "CA"
+    Then I should see 58 counties
+    And the page should be axe clean
 
 ## CS169: Add the second page here.
-# @a11y
-# Scenario: ...
+@a11y
+Scenario: The County Page
+    Given Geocodio returns "Alex Padilla" as a senator for any address
+    And I am on the county page for "001" in "CA"
+    Then I should see "Alex Padilla"
+    And the page should be axe clean
 
 ## CS169: Add the third page here.
 # @a11y

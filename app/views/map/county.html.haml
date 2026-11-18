@@ -4,7 +4,7 @@
       = link_to state_map_path(@state.symbol), class: 'btn btn-link ps-0' do
         %i.fas.fa-arrow-left{ 'aria-hidden': true }
         Back to #{@state.name}
-      %h2.text-center
+      %h1.text-center.h2
         #{@county.name}, #{@state.symbol}
       .overflow-hidden.bg-light.text-center.mb-3
         .overflow-auto.py-3
@@ -14,7 +14,7 @@
             %title  Map of #{@state.name} highlighting #{@county.name}
             /* SVG element will be filled using d3.js and a topojson file. */
     %section.my-4#actionmap-county-representatives
-      %h3.text-center Representatives for #{@county.name}
+      %h2.text-center.h3 Representatives for #{@county.name}
       - if @representatives.any?
         = render 'representatives/table', representatives: @representatives
       - else

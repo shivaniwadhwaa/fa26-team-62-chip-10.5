@@ -100,3 +100,11 @@ div.actions {
 label {
   display: block;
 }
+
+// Bootstrap's default link blue is only ~4.2:1 on our light gray backgrounds,
+// which fails WCAG AA (4.5:1). Use the darker blue for link-style buttons.
+.btn-link {
+  --bs-btn-color: #0a58ca;
+  --bs-btn-hover-color: #084298;
+  --bs-btn-active-color: #084298;
+}
