@@ -24,6 +24,9 @@ module NavigationHelpers
     when /^the county page for "(\d{3})" in "(\w\w)"$/
       "/state/#{$2}/county/#{$1}"
 
+    when /^the profile page for "([^"]*)"$/
+      representative_path(Representative.find_by!(name: $1))
+
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #
