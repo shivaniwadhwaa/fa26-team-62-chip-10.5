@@ -1,0 +1,30 @@
+databases:
+  - name: actionmap-db
+    databaseName: actionmap_production
+    user: actionmap
+    plan: free
+
+services:
+  - type: web
+    name: fa26-team-62-actionmap
+    runtime: ruby
+    plan: free
+    buildCommand: ./bin/render-build.sh
+    startCommand: bundle exec puma -C config/puma.rb
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: actionmap-db
+          property: connectionString
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: GEOCODIO_API_KEY
+        sync: false
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      - key: BUNDLE_WITHOUT
+        value: development:test
+      - key: NODE_VERSION
+        value: "22"
+      - key: WEB_CONCURRENCY
+        value: "0"

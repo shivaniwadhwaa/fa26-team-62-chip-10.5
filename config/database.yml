@@ -64,6 +64,7 @@ test:
 #
 production:
   <<: *postgresql
+  url: <%= ENV['DATABASE_URL'] %>
   database: actionmap_production
   username: actionmap
   password: <%= ENV['ACTIONMAP_DATABASE_PASSWORD'] %>
